@@ -1,0 +1,170 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.local/video-prompt-studio/package.schema.json",
+  "title": "视频提示词生产包",
+  "description": "8 节合同的结构化副本。Markdown 是主交付，本文件用于程序化校验与导出。",
+  "type": "object",
+  "required": ["title", "model", "sections"],
+  "additionalProperties": false,
+  "properties": {
+    "title": {"type": "string", "maxLength": 120},
+    "model": {
+      "type": "string",
+      "enum": ["seedance-2.0", "seedance-2.5", "veo", "minimax-h3", "kling", "generic"]
+    },
+    "delivery": {"type": "string", "enum": ["single", "sequence", "series"]},
+    "package_version": {"type": "string", "pattern": "^v[0-9]+$"},
+    "sections": {
+      "type": "object",
+      "required": ["decisions", "facts", "shots", "prompts", "assets", "params", "checks", "risks"],
+      "additionalProperties": false,
+      "properties": {
+        "decisions": {
+          "type": "object",
+          "required": ["filled_by_default", "unknown", "not_done"],
+          "additionalProperties": false,
+          "properties": {
+            "filled_by_default": {"type": "array", "items": {"type": "string"}},
+            "unknown": {"type": "array", "items": {"type": "string"}},
+            "not_done": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "facts": {
+          "type": "object",
+          "required": ["persons", "scene", "time", "props", "must_keep", "dialogue"],
+          "additionalProperties": false,
+          "properties": {
+            "persons": {"type": "array", "items": {"type": "string"}},
+            "scene": {"type": "string"},
+            "time": {"type": "string"},
+            "props": {"type": "array", "items": {"type": "string"}},
+            "must_keep": {"type": "array", "items": {"type": "string"}},
+            "dialogue": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["speaker", "text", "tone", "chars", "budget"],
+                "additionalProperties": false,
+                "properties": {
+                  "speaker": {"type": "string"},
+                  "text": {"type": "string"},
+                  "tone": {"type": "string"},
+                  "chars": {"type": "integer", "minimum": 0},
+                  "budget": {"type": "number", "minimum": 0},
+                  "verdict": {"type": "string", "enum": ["可执行", "超时，需拆镜或延长"]}
+                }
+              }
+            }
+          }
+        },
+        "shots": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "t0", "t1", "size", "angle", "lens", "move", "action", "sound"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {"type": "string", "pattern": "^S[0-9]{2}-[0-9]{2}$"},
+              "t0": {"type": "number", "minimum": 0},
+              "t1": {"type": "number", "exclusiveMinimum": 0},
+              "size": {"type": "string", "enum": ["远景", "全景", "中景", "中近景", "近景", "特写"]},
+              "angle": {"type": "string", "enum": ["平视", "俯视", "仰视", "低角度", "高角度", "过肩", "主观"]},
+              "lens": {"type": "string", "maxLength": 20},
+              "move": {"type": "string", "maxLength": 20},
+              "action": {"type": "string", "minLength": 1, "maxLength": 300},
+              "dialogue": {"type": "array", "items": {"type": "string"}},
+              "sound": {"type": "string", "maxLength": 300},
+              "in_state": {"type": "string", "maxLength": 200},
+              "out_state": {"type": "string", "maxLength": 200}
+            }
+          }
+        },
+        "prompts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["segment", "text"],
+            "additionalProperties": false,
+            "properties": {
+              "segment": {"type": "string", "pattern": "^S[0-9]{2}$"},
+              "text": {"type": "string", "minLength": 1},
+              "code_block": {"type": "boolean", "default": true}
+            }
+          }
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "role", "scope", "must_not_transfer", "slot"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {"type": "string", "pattern": "^A[0-9]{2,3}$"},
+              "name": {"type": "string"},
+              "role": {"type": "string"},
+              "scope": {"type": "array", "items": {"type": "string"}},
+              "must_not_transfer": {"type": "array", "items": {"type": "string"}},
+              "slot": {"type": "string", "maxLength": 30}
+            }
+          }
+        },
+        "params": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key", "value", "evidence"],
+            "additionalProperties": false,
+            "properties": {
+              "key": {"type": "string"},
+              "value": {"type": "string"},
+              "evidence": {"type": "string", "enum": ["A", "B", "C", "D"]},
+              "note": {"type": "string"}
+            }
+          }
+        },
+        "checks": {
+          "type": "object",
+          "required": ["structural", "reviewed"],
+          "additionalProperties": false,
+          "properties": {
+            "structural": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id", "status"],
+                "properties": {
+                  "id": {"type": "string", "pattern": "^S-[0-9]{2}$"},
+                  "status": {"type": "string", "enum": ["PASS", "WARN", "FAIL"]},
+                  "detail": {"type": "string"}
+                }
+              }
+            },
+            "reviewed": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id", "status"],
+                "properties": {
+                  "id": {"type": "string", "pattern": "^R-[0-9]{2}$"},
+                  "status": {"type": "string", "enum": ["通过", "需修改", "需人工看成片"]},
+                  "detail": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "risks": {
+          "type": "object",
+          "required": ["likely_failures", "next_patch", "unverified"],
+          "additionalProperties": false,
+          "properties": {
+            "likely_failures": {"type": "array", "items": {"type": "string"}},
+            "next_patch": {"type": "string"},
+            "unverified": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    }
+  }
+}

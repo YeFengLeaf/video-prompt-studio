@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.local/video-prompt-studio/request.schema.json",
+  "title": "视频提示词请求",
+  "description": "Skill 第 1 轮接收的最小请求。Markdown 对话可省略此文件；需要程序化接入时使用。",
+  "type": "object",
+  "required": ["input_type", "text"],
+  "additionalProperties": false,
+  "properties": {
+    "input_type": {
+      "type": "string",
+      "enum": ["idea", "synopsis", "script", "storyboard", "lyric", "ad", "nonreal"],
+      "description": "输入成熟度：一句话创意/梗概/完整剧本/已有分镜/歌词/广告 brief/非写实方向"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200000,
+      "description": "用户原文，逐字保存，不改写"
+    },
+    "model": {
+      "type": "string",
+      "enum": ["seedance-2.0", "seedance-2.5", "veo", "minimax-h3", "kling", "generic"],
+      "default": "seedance-2.0",
+      "description": "目标模型方言；未知用 generic"
+    },
+    "delivery": {
+      "type": "string",
+      "enum": ["single", "sequence", "series"],
+      "default": "single",
+      "description": "单条 / 多镜序列 / 多集"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 60,
+      "description": "单条预期时长；留空则由内容决定"
+    },
+    "aspect": {
+      "type": "string",
+      "enum": ["16:9", "9:16", "1:1", "4:3", "auto"],
+      "default": "auto"
+    },
+    "must_keep": {
+      "type": "array",
+      "items": {"type": "string", "maxLength": 500},
+      "maxItems": 20,
+      "description": "必须原样保留的台词、品牌名、禁用项"
+    },
+    "assets": {
+      "type": "array",
+      "maxItems": 30,
+      "description": "用户实际拥有的素材；待生成素材不要放这里",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "role"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^A[0-9]{2,3}$"},
+          "type": {
+            "type": "string",
+            "enum": ["character", "scene", "product", "prop", "first_frame", "last_frame", "video", "audio"]
+          },
+          "role": {"type": "string", "maxLength": 40, "description": "只写一个主职责"},
+          "scope": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^(全部|S[0-9]{2}-[0-9]{2})$"},
+            "description": "作用镜头；空数组表示待确认，不自动扩成全片"
+          },
+          "must_not_transfer": {
+            "type": "array",
+            "items": {"type": "string", "maxLength": 40},
+            "description": "不得传递的属性"
+          },
+          "note": {"type": "string", "maxLength": 1000}
+        }
+      }
+    },
+    "pending_assets": {
+      "type": "array",
+      "items": {"type": "string", "maxLength": 200},
+      "description": "待生成资产清单；不进入视频引用"
+    },
+    "assumptions_allowed": {
+      "type": "boolean",
+      "default": true,
+      "description": "是否允许用默认值推进并在决策摘要标注"
+    }
+  }
+}

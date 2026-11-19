@@ -2,9 +2,23 @@
 
 本文件记录 `video-prompt-studio` 的版本变更。格式参考 Keep a Changelog；版本号语义化。
 
-## [1.0.1-dev] - Unreleased（2026-10-27，开发中，未发布）
+## [Unreleased] - 2026-11-19（文档与质量门禁修复，未发布）
 
-Batch A（P0 修复）与 Batch B（入口瘦身与样例扩充）均已提交到工作副本，未打包、未发布。
+### Fixed
+
+- 版本口径：README、`说明.md`、`SKILL.md` 由 v1.0.0 RC / `1.0.1-dev` 对齐到已发布的 **v1.0.1-beta**（2026-10-27 prerelease）；`SKILL.md` frontmatter 改为 `1.0.1-beta`。
+- 安装路径：README、`docs/03`、`说明.md` 的 `视频提示词Skill` 改为实际发行目录 `video-prompt-studio`；补充 macOS `ditto` 解压说明，避免系统 `unzip` 对中文文件名失败。
+- 校验和：新增根目录 `SHA256SUMS`，记录 v1.0.1-beta zip 的 SHA-256；明确该 Release 资产未上传 `SHA256SUMS`，仓库文件不冒充 Release 资产。
+- 质量门禁：`scripts/quality_gate.py --cases` 在任一 case mismatch 时返回 exit 1；case 09 因提示词含 `8K` 触发 Q4 参数泄漏，预期由 `WARN` 更正为 `BLOCKED`；新增 `scripts/tests/test_quality_gate_exit.py`，验证全匹配 exit 0、mismatch exit 1、无 case exit 2。`selftest.py` 的质量门禁项改为要求 20/20。
+- 外部模型口径：Runway Gen-3 由 A 降为 C/未核实（官方发布页只证实 Gen-3 Alpha 与面板能力，未证实具体参数）；Sora 2 产品停用日期 2026-04-26 因系统卡返回 403 标为未复核，Videos API 2026-09-24 关闭仍按 OpenAI 模型页记为 A；Kling 4.0 复核日期更新为 2026-11-19（官方页标注 2026-11-04，数值未变）。
+- 历史文档：`docs/02`、`docs/04`、`docs/05` 增加历史状态说明，避免把 2026-10-20 的 13/13、4 样例、17/223 等旧计数当作当前状态；`docs/05` 补充 G5 按 README 未通过、G6/G7/G8/G9 仍未完成的实况。
+- 发行包边界：README、`docs/03`、`docs/05` 明确 20/20 与 mismatch 非零退出只适用于当前分支；已发布 `v1.0.1-beta` zip 内仍是旧文档与旧门禁（19/20、mismatch 退出 0），不能当作已对齐的安装/校验入口。
+- 历史口径：`docs/05` 的“当前状态”改为“当时状态（截至 2026-10-20）”；质量指标注明 20/20 是 2026-11-19 当前分支复核值。`CHANGELOG` 1.0.1-beta 条目补充说明 `docs/05` 后续已加历史注记。
+- 回归入口：`scripts/tests/test_quality_gate_exit.py` 仍需按 README / `docs/03` 手动运行，尚未接入 `selftest.py`；仓库没有 CI workflow，发布前须单独执行该测试。
+
+## [1.0.1-beta] - 2026-10-27（预发布）
+
+Batch A（P0 修复）、Batch B（入口瘦身与样例扩充）、Batch C 与知识库并入均已打包为 v1.0.1-beta 预发布（GitHub Release，2026-10-27）；这是 prerelease，不是 GA。
 
 ### Added
 
@@ -19,9 +33,9 @@ Batch A（P0 修复）与 Batch B（入口瘦身与样例扩充）均已提交�
 ### Changed
 
 - 入口瘦身：`SKILL.md` 由 223 行减至 135 行（Batch A 之后）；§6 模型参数表细节只保留在 `references/03_模型适配.md`，§10 失败症状表只保留在 `references/06_质量与自检.md` §4，入口只留指针与规则；章节编号未变，交叉引用未断。
-- Kling 表述统一为实验性、未核实：`SKILL.md` frontmatter 与 §6、`docs/05_发布计划_v1.0.md` 的发布文案；Kling 参数在样例中标 C 级「未核实」，须按平台复核。
+- Kling 表述统一为实验性、未核实（后被 Batch C 更正为 Kling 4.0 A 级）：`SKILL.md` frontmatter 与 §6、`docs/05_发布计划_v1.0.md` 的发布文案；Kling 参数在样例中标 C 级「未核实」，须按平台复核。
 - 参数核验日期规则（`SKILL.md` §4 第 6 节）：核验日期填 `references/03_模型适配.md` 的核验日期，超过 30 天写「需复核」，不得当作现行事实。
-- 样例计数 4 组 → 6 组（`SKILL.md`、`README.md` 正文与 `说明.md` 的样例表；`docs/05_发布计划_v1.0.md` 仅发布文案 1 行已改，门禁表与质量指标仍为 v1.0.0 历史记录，未改）。
+- 样例计数 4 组 → 6 组（`SKILL.md`、`README.md` 正文与 `说明.md` 的样例表；`docs/05_发布计划_v1.0.md` 仅发布文案 1 行已改，门禁表与质量指标当时仍为 v1.0.0 历史记录，未改；2026-11-19 已在 Unreleased 增加历史状态说明与当前复核口径）。
 
 ### Batch C（复核后修复，2026-10-27；两模型复核均报 P0，已逐项修）
 
@@ -31,20 +45,20 @@ Batch A（P0 修复）与 Batch B（入口瘦身与样例扩充）均已提交�
 - 版本与口径统一：`SKILL.md` frontmatter `1.0.1-dev`；`README.md` 回归 17 项；`说明.md` 当前状态行更新；本条样例计数口径修正为实际改动范围；`docs/06` 方言覆盖改为建议项，不计入 G6 判定。
 - Lane 判据（`SKILL.md` §3、`references/00_交互协议.md` §4）：有第三方验收 / 客户交付 / 需回滚证据或合规审查的，一律走 Full Lane 建项目状态。
 
-### 知识库并入（2026-10-27，未发布；决策 D2）
+### 知识库并入（2026-10-27，随 v1.0.1-beta 预发布；决策 D2）
 
 - Added：`references/08_知识库融合.md`（方法论 M1–M10 已去绑定、STYLE LOCK 壳结构、单项目方法卡通用规则摘要）；`references/09_去AI感策略库.md`（八类缺陷对抗词、面部去 AI 感、物理正确性八条）；`references/10_自动化设计注记.md`（VideoGenCLI 架构，设计文档、未实现）；`references/方言骨架/` 10 个模型骨架（只复述档案，不新增参数）。
 - Added：`references/02` 追加光线与氛围、自查清单、长度与拆条、电影语言常识、站位行格式；`references/04` 追加首帧六条门槛、多图分工协议、资产命名规范、人物一致性（视觉身份证/方案对比/seed-recipe）；`references/05` 追加台词去 AI 感（14 条禁用词、5 维身份矩阵）与声音一致性（音色身份证、方案对比、克隆纪律）；`references/00` 追加七阶段状态机；`references/06` 追加失败归档流程。
 - Added：`references/03` 扩展为 11 模型总表（新增 Runway Gen-3、Pika 2.5、Sora 2 历史口径、Wan2.2、LTX-2/2.3 五档档案）+ 转换引擎五步 + 切换验收三条 + G7 复核记录补遗；方言骨架与总表逐值一致。
-- Added：`scripts/check_switch.py`（切换验收）、`scripts/quality_gate.py`（质量门禁，`scripts/fixtures/quality_gate_cases.md` 20 例，一致率 19/20，case 09 已知未调）、`scripts/dialect_converter.py`（故事核逐字保留，未填参数一律 `[UNVERIFIED: to fill in]`；Kling/Veo/MiniMax/Sora 档案已按 G7 更正，Kling 改为 4.0 A 级 `@Element1`）；`templates/styles/style-lock.md`（STYLE LOCK 壳模板）；`selftest.py` 增至 20 项，全部通过。
+- Added：`scripts/check_switch.py`（切换验收）、`scripts/quality_gate.py`（质量门禁，`scripts/fixtures/quality_gate_cases.md` 20 例；v1.0.1-beta 发行时一致率 19/20，case 09 已知未调，2026-11-19 已修预期与退出码，见 Unreleased）、`scripts/dialect_converter.py`（故事核逐字保留，未填参数一律 `[UNVERIFIED: to fill in]`；Kling/Veo/MiniMax/Sora 档案已按 G7 更正，Kling 改为 4.0 A 级 `@Element1`）；`templates/styles/style-lock.md`（STYLE LOCK 壳模板）；`selftest.py` 增至 20 项，全部通过。
 - Changed：Kling 表述由「实验性、未核实」更正为 Kling 4.0 已核实（A 级，官方 4.0 用户指南，2026-10-27 复核）：`SKILL.md` frontmatter 与 §6、`README.md`、`说明.md`；`docs/05_发布计划_v1.0.md` 为 v1.0.0 历史记录，未改。`SKILL.md` 入口 135 行 → 143 行（≤150 行）。
 - Changed：示例说话人去绑定：`references/05` 的示例名替换为通用占位「角色A」；`说明.md` 的本地源目录绝对路径泛化。
 - Excluded（未并入）：融合映射表、调研记录 JSON、采集管线代码、失败案例原文、单项目方法卡原文、源项目专用壳 02–05；采集管线仅在 `references/10` 留一条未实现注记。
 
 ### Pending（仍未完成，不得声称已做）
 
-- 外部手测（G6）：`docs/06_外部手测记录表.md` 仅为协议，截至 2026-10-27 尚未执行，无任何手测记录，G6 未通过。
-- 平台参数复核（G7）：部分完成——Seedance / Veo / MiniMax H3 / Kling 4.0 / Sora 停用状态已按官方文档复核（见 `references/03` §11/§14）；Runway Gen-3、Pika 2.5 等 6 项未确认，G7 未通过。
+- 外部手测（G6）：`docs/06_外部手测记录表.md` 仅为协议，截至 2026-11-19 尚未执行，无任何手测记录，G6 未通过。
+- 平台参数复核（G7）：部分完成——Seedance / Veo / MiniMax H3 / Kling 4.0（2026-11-19 复核）/ Sora 2 API 关闭状态有官方页记录（见 `references/03` §11/§14）；Runway Gen-3、Pika 2.5 等 6 项未确认，G7 未通过。
 
 ## [1.0.0] - 2026-10-20
 

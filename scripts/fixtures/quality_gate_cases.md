@@ -2,6 +2,8 @@
 
 > 预期分级（EXPECTED）为本文件作者的人工判断，**写于运行 `quality_gate.py` 之前**，未按脚本输出倒推调整。门禁规则见 `scripts/quality_gate.py` 文首。分级口径：BLOCKED = 缺 STYLE LOCK / 参数泄漏 / 锚定职责冲突 / ≥3 个情绪形容词；WARN = 对抗覆盖 ≤3 类、或引用无职责词、或 1–2 个情绪形容词；PASS = 覆盖 ≥4 类且无上述问题。
 >
+> **2026-11-19 更正**：CASE 09 的提示词含 `8K`，按 Q4 参数泄漏规则应判 `BLOCKED`；初版 `EXPECTED=WARN` 是录入错误，现改为 `BLOCKED`，不是按运行结果倒推。若去掉 `8K`，该例才会落到 `WARN`。
+>
 > 格式：`<!-- CASE N EXPECTED=TIER -->` + 一个 ` ```text ` 提示词块。`--cases` 模式按此格式解析。
 
 <!-- CASE 01 EXPECTED=PASS -->
@@ -61,7 +63,7 @@ STYLE LOCK：冷白招牌主光。
 动作按节拍数写，情绪写成时间弧。光影跟随光源变化，地面有淡淡投影。
 ```
 
-<!-- CASE 09 EXPECTED=WARN -->
+<!-- CASE 09 EXPECTED=BLOCKED -->
 ```text
 STYLE LOCK：电影感。
 cinematic, film grain, bokeh, anamorphic, 8K 超写实，梦幻光晕，极致唯美。

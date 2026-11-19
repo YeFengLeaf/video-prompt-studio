@@ -3,7 +3,7 @@
 > 一句话创意 / 一段剧本 → **3 轮内**拿到能直接粘贴进视频模型的生产包。
 > 不是提示词收藏夹，也不是视频生成器。
 >
-> 状态：**v1.0.0 发布候选**（2026-10-20 质检通过；外部手测与平台参数复核尚未完成）。
+> 状态：**v1.0.1-beta 预发布**（2026-10-27 发布；外部手测 G6 与平台参数复核 G7 仍未完成，不能称为 GA）。
 
 - 支持方言：Seedance 2.0 / 2.5、Veo 3 / 3.1、MiniMax H3、Kling 4.0、Runway Gen-3、Pika 2.5、Wan2.2、LTX-2/2.3（Sora 2 仅历史口径）、通用
 - 交付物：8 节 Markdown 生产包（决策摘要 / 事实层 / 分镜表 / 提示词 / 素材挂图 / 参数 / 自检 / 风险）
@@ -29,19 +29,48 @@
 
 ---
 
+## 发布包与校验和
+
+最新发布是 **v1.0.1-beta** 预发布（GitHub Release，2026-10-27），资产为 `video-prompt-studio-v1.0.1-beta.zip`（230,270 B）。当前 Release 资产只有 zip，没有附 `SHA256SUMS`；仓库根目录的 [`SHA256SUMS`](SHA256SUMS) 提供该 zip 的 SHA-256：
+
+```text
+00240eb3d1914d52724142cde2f87260074ab0f8d8e7f46db1192da3fd38f5ea  video-prompt-studio-v1.0.1-beta.zip
+```
+
+下载 zip 后放在同一目录校验：
+
+```bash
+# macOS / Linux
+shasum -a 256 -c SHA256SUMS
+# Windows PowerShell
+Get-FileHash .\video-prompt-studio-v1.0.1-beta.zip -Algorithm SHA256
+```
+
+> Release 说明里写的“同目录 SHA256SUMS”目前没有作为 Release 资产上传；下次发布应把本文件一并上传。不要把它当成已随 Release 提供的文件。
+
+> **已发布 zip 的内容限制（2026-11-19 实测）**：`v1.0.1-beta` 资产由提交 `d18fae6` 打包，包内 `README.md` / `CHANGELOG.md` / `SKILL.md` / `说明.md` 仍是旧口径（README 标“v1.0.0 发布候选”，安装命令写 `视频提示词Skill`；SKILL 标 `1.0.1-dev`；说明标 `v1.0.0 发布候选`；zip 内中文文件名可能显示为 `??????.md`），包内 `scripts/quality_gate.py --cases` 也是旧版：20 例中 19/20 一致，且 mismatch 返回 0。仓库当前分支已修复这些文档与门禁问题；合并后可用 `git clone` 取 main，或等待经批准后重新打包的 Release。不要在旧 zip 内直接照做下节的 20/20 校验。
+
+---
+
 ## 安装
 
 ```bash
-# Claude Code / 兼容 Agent Skills 的客户端
-cp -r 视频提示词Skill ~/.claude/skills/video-prompt-studio
+# 1) 取得目录（二选一）
+git clone https://github.com/YeFengLeaf/video-prompt-studio.git
+# 或解压 Release zip：macOS 系统 unzip 对中文文件名可能失败，用 ditto
+# ditto -x -k video-prompt-studio-v1.0.1-beta.zip .
+# Linux / Windows 可用 unzip video-prompt-studio-v1.0.1-beta.zip
+
+# 2) 安装到客户端（在 video-prompt-studio 的上一级执行）
+cp -r video-prompt-studio ~/.claude/skills/video-prompt-studio
 
 # 或作为项目内技能
-cp -r 视频提示词Skill <project>/.claude/skills/video-prompt-studio
+cp -r video-prompt-studio <project>/.claude/skills/video-prompt-studio
 ```
 
 没有安装机制时，直接把 `SKILL.md` 贴进对话，或让 Agent 读这个目录。
 
-**目录名必须与 frontmatter 的 `name` 一致**（`video-prompt-studio`）；部分客户端按目录名索引技能，目录叫 `视频提示词Skill` 时可能不加载。
+**目录名必须与 frontmatter 的 `name` 一致**（`video-prompt-studio`）；发行包顶层目录已经是 `video-prompt-studio`，安装时不要改成旧文档里的 `视频提示词Skill`。部分客户端按目录名索引技能。
 
 依赖：无。脚本只用 Python 标准库（3.9+）。
 
@@ -83,27 +112,31 @@ cp -r 视频提示词Skill <project>/.claude/skills/video-prompt-studio
 ## 目录
 
 ```text
-视频提示词Skill/
+video-prompt-studio/
 ├── SKILL.md                 入口（3 轮契约 / 路由 / 8 节合同 / 硬边界）
 ├── references/              按需加载的 11 篇规则 + 方言骨架（10 个模型骨架）
 ├── templates/               18 个可组合模板（base / styles / shots）
 ├── assets/
 │   ├── examples/            6 组可复现样例
 │   └── schemas/             请求 / 计划 / 生产包 JSON Schema
-├── scripts/                 6 个确定性校验脚本
-└── docs/                    调研报告 / 差距方案 / 使用验证 / 质检 / 发布计划
+├── scripts/                 6 个确定性校验脚本 + tests/ 回归测试
+└── docs/                    调研 / 差距 / 使用验证 / 质检 / 发布计划 / 外部手测协议
 ```
 
 ---
 
 ## 校验
 
+以下命令和结果（20/20、mismatch 非零退出）针对**当前仓库分支**；已发布的 `v1.0.1-beta` zip 内是旧脚本，实测 19/20 且 mismatch 退出 0，不能用于复现本节结果。差异见“发布包与校验和”节的“已发布 zip 的内容限制”。
+
 ```bash
-cd 视频提示词Skill
-# Windows 建议加 -X utf8；脚本只用标准库
-python -X utf8 scripts/check_templates.py                 # 18 个模板 + 229 个占位符
-python -X utf8 scripts/check_package.py output.md --model seedance-2.0
-python -X utf8 scripts/selftest.py                        # 20 项回归
+cd video-prompt-studio
+# macOS/Linux 用 python3；Windows 换成 python 或 py -3（保留 -X utf8）；脚本只用标准库
+python3 -X utf8 scripts/check_templates.py                 # 18 个模板 + 229 个占位符
+python3 -X utf8 scripts/check_package.py output.md --model seedance-2.0
+python3 -X utf8 scripts/selftest.py                        # 20 项回归
+python3 -X utf8 scripts/quality_gate.py --cases scripts/fixtures/quality_gate_cases.md  # 20/20，mismatch 非零退出
+python3 -X utf8 scripts/tests/test_quality_gate_exit.py    # 质量门禁退出码回归
 ```
 
 示例：`check_package.py` 输出
@@ -142,7 +175,7 @@ S-03  PASS 分镜合计 15.0s ≈ 标称 15s
 - 平台参数来自公开文档与社区转引，**没有逐台实测**；平台改版后需重核。
 - 脚本 PASS 只证明文本层结构自洽，**不证明成片好看**。
 - 样例是 synthetic 输入，不是真实成片复现。
-- Kling 4.0 参数已按官方 4.0 用户指南核实（2026-10-27）；旧版参数未核实，出包前先确认版本。Runway Gen-3 / Pika 2.5 全表未在官方页复核，Sora 2 已停用（历史口径）。
+- Kling 4.0 参数已按官方 4.0 用户指南核实（页面标注 2026-11-04；本库 2026-11-19 复核，值未变）；旧版参数未核实，出包前先确认版本。Runway Gen-3 全表未在官方 Gen-3 文档页复核，已降为 C/未核实；Pika 2.5 全表未在官方页复核，维持 B 转引；Sora 2 API 已关闭（历史口径）。
 
 ---
 

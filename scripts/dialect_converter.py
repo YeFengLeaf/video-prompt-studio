@@ -64,7 +64,7 @@ MODELS = {
     },
     "kling": {
         "grade": "A",
-        "records": "Kling official 4.0 user guide (2026-10-27)",
+        "records": "Kling official 4.0 user guide (page dated 2026-11-04; rechecked 2026-11-19, values unchanged)",
         "ref_syntax": "@Image1 / @Video1 / @Element1 (capital E)",
         "structure": "natural language; references numbered in upload order, each with a stated purpose; parameters outside the prompt",
         "notes": [
@@ -74,8 +74,8 @@ MODELS = {
         ],
     },
     "runway": {
-        "grade": "A",
-        "records": "REC_041/042/043/044/045; REC_046 is C UNVERIFIED",
+        "grade": "C",
+        "records": "REC_041/042/043/044/045/046; official release page confirms Gen-3 Alpha and Motion Brush / camera controls only; numeric parameters UNVERIFIED",
         "ref_syntax": "natural language + panels (no @ syntax)",
         "structure": "[shot size] + [angle] + [movement + direction + speed] + [subject and action] + [lens/look] + [lighting/mood] + [what the shot reveals]",
         "notes": [
@@ -98,7 +98,7 @@ MODELS = {
     },
     "sora": {
         "grade": "A",
-        "records": "REC_052-054 (OpenAI official pages; product discontinued 2026-04-26, Videos API closed 2026-09-24: HISTORICAL ONLY)",
+        "records": "REC_052-054 (OpenAI model page confirms Videos API closed 2026-09-24 and 720p; product shutdown date 2026-04-26 unverified because the system card returned 403: HISTORICAL ONLY)",
         "ref_syntax": "natural-language shot-list sections (no @ syntax)",
         "structure": "Primary Target & Visuals -> Format & Look -> Lenses & Filtration -> Grade/Palette -> Lighting & Atmosphere -> Location & Framing -> Sound -> Optimized Shot List",
         "notes": [

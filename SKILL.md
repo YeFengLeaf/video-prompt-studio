@@ -3,7 +3,7 @@ name: video-prompt-studio
 description: 把一句创意、一段梗概、一份剧本或一版分镜，在 3 轮内变成可直接粘贴进视频模型的结构化提示词生产包，含镜头语言、时间轴、素材引用、参数与自检；支持 Seedance 2.0/2.5、Veo 3/3.1、MiniMax H3、Kling 4.0、Runway Gen-3、Pika 2.5、Wan2.2、LTX-2/2.3 的方言（Sora 2 仅历史口径），另有通用方言。用户说“写视频提示词 / 分镜 / Seedance 提示词 / 即梦提示词 / 可灵提示词 / 一镜到底 / 产品广告片 / 短剧分镜 / 图生视频提示词 / 把剧本变成视频 / 审一下这条提示词”时使用。不生成图片或视频，不调用付费接口，不承诺成片质量。无代码宿主时以人工对账代替脚本自检并明示，不得谎报脚本结果。
 license: MIT
 metadata:
-  version: "1.0.1-dev"
+  version: "1.0.1-beta"
 ---
 
 # 视频提示词工作台（Video Prompt Studio）
@@ -84,7 +84,7 @@ metadata:
 
 ## 6. 模型方言（细节只在 `references/03_模型适配.md`，不要凭记忆填数字）
 
-上限、画幅、分辨率、参考数、引用语法、参数位置见该文件 §2 总表与各模型分节（§12 为 Runway / Pika / Sora / Wan / LTX 档案；方言骨架见 `references/方言骨架/`）。**Kling 4.0 已核实**（A 级，官方 4.0 用户指南，2026-10-27 复核；旧版参数未核实，出包前先确认版本）。**切换模型只重编译执行层**：故事层（事实、分镜、台词）不动，只改结构顺序、引用语法、参数位置、音频写法（切换协议见该文件 §9、执行细则见 §13）。
+上限、画幅、分辨率、参考数、引用语法、参数位置见该文件 §2 总表与各模型分节（§12 为 Runway / Pika / Sora / Wan / LTX 档案；方言骨架见 `references/方言骨架/`）。**Kling 4.0 已核实**（A 级，官方 4.0 用户指南，页面标注 2026-11-04；本库 2026-11-19 复核，值未变；旧版参数未核实，出包前先确认版本）。**切换模型只重编译执行层**：故事层（事实、分镜、台词）不动，只改结构顺序、引用语法、参数位置、音频写法（切换协议见该文件 §9、执行细则见 §13）。
 
 ## 7. 按需加载（不要一次读完所有文件）
 
@@ -120,7 +120,7 @@ python -X utf8 scripts/check_package.py output.md --model seedance-2.0
 python -X utf8 scripts/check_templates.py            # 模板结构 + {{占位符}} 完整性
 python -X utf8 scripts/selftest.py                   # 样例 + 全部模板 + 新脚本回归
 python -X utf8 scripts/check_switch.py <包A.md> <包B.md>   # 切换验收：故事层逐字一致
-python -X utf8 scripts/quality_gate.py --cases scripts/fixtures/quality_gate_cases.md  # 质量门禁 20 例
+python -X utf8 scripts/quality_gate.py --cases scripts/fixtures/quality_gate_cases.md  # 质量门禁 20 例；mismatch 非零退出
 python -X utf8 scripts/dialect_converter.py --input neutral.txt --model kling  # 方言转换：故事核逐字保留
 ```
 
@@ -132,7 +132,7 @@ python -X utf8 scripts/dialect_converter.py --input neutral.txt --model kling  #
 
 ## 11. 文件结构
 
-入口 `SKILL.md`；规则 `references/`（11 篇，按需加载）+ `references/方言骨架/`（10 个模型骨架）；模板 `templates/`（base / styles / shots）；样例 `assets/examples/`（6 组，输入 → 输出）；schemas `assets/schemas/`；脚本 `scripts/`（6 个确定性校验脚本）；文档 `docs/`（调研、差距、验证、发布计划）；给人看的 `README.md`、`CHANGELOG.md`、`说明.md`。
+入口 `SKILL.md`；规则 `references/`（11 篇，按需加载）+ `references/方言骨架/`（10 个模型骨架）；模板 `templates/`（base / styles / shots）；样例 `assets/examples/`（6 组，输入 → 输出）；schemas `assets/schemas/`；脚本 `scripts/`（6 个确定性校验脚本）；文档 `docs/`（调研、差距、验证、质检、发布计划、外部手测协议）；给人看的 `README.md`、`CHANGELOG.md`、`说明.md`。
 
 ## 12. 真实性边界（对外必须照实说）
 

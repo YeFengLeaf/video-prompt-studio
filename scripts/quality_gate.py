@@ -27,7 +27,8 @@ Usage:
     python3 quality_gate.py --package package.md [--json]
     python3 quality_gate.py --cases scripts/fixtures/quality_gate_cases.md
 The --cases mode parses the case file format (see that file) and prints the
-per-case tier, the expected tier, and the agreement rate.
+per-case tier, the expected tier, and the agreement rate. Exit codes for
+--cases: 0 = every case agrees; 1 = at least one mismatch; 2 = no cases found.
 """
 
 import argparse
@@ -194,7 +195,7 @@ def run_cases(path):
             num, tier, expected, "AGREE" if ok else "MISMATCH",
             "; ".join("%s:%s" % (c["id"], c["status"]) for c in checks)))
     print("agreement: %d/%d = %.1f%%" % (agree, len(cases), 100.0 * agree / len(cases)))
-    return 0
+    return 0 if agree == len(cases) else 1
 
 
 def main(argv=None):

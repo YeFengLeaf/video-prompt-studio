@@ -215,7 +215,7 @@ def test_check_switch():
 
 
 def test_quality_gate_cases():
-    """quality_gate.py --cases：20 例一致率 ≥19/20（case 09 已知未调）。"""
+    """quality_gate.py --cases：20 例全部一致；mismatch 必须非零退出。"""
     import subprocess
     cases = HERE / "fixtures" / "quality_gate_cases.md"
     if not cases.exists():
@@ -224,7 +224,7 @@ def test_quality_gate_cases():
     r = subprocess.run([sys.executable, str(HERE / "quality_gate.py"), "--cases", str(cases)],
                        capture_output=True, text=True, encoding="utf-8")
     m = re.search(r"agreement: (\d+)/(\d+)", r.stdout)
-    ok = r.returncode == 0 and bool(m) and int(m.group(1)) >= 19 and m.group(2) == "20"
+    ok = r.returncode == 0 and bool(m) and int(m.group(1)) == 20 and m.group(2) == "20"
     record("质量门禁 20 例", ok, m.group(0) if m else (r.stdout + r.stderr)[-160:])
 
 

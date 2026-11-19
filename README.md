@@ -48,7 +48,7 @@ Get-FileHash .\video-prompt-studio-v1.0.1-beta.zip -Algorithm SHA256
 
 > Release 说明里写的“同目录 SHA256SUMS”目前没有作为 Release 资产上传；下次发布应把本文件一并上传。不要把它当成已随 Release 提供的文件。
 
-> **已发布 zip 的内容限制（2026-11-19 实测）**：`v1.0.1-beta` 资产由提交 `d18fae6` 打包，包内 `README.md` / `CHANGELOG.md` 仍是旧口径（README 标“v1.0.0 发布候选”，安装命令写 `视频提示词Skill`），包内 `scripts/quality_gate.py --cases` 也是旧版：20 例中 19/20 一致，且 mismatch 返回 0。仓库当前分支已修复这些文档与门禁问题；要按本 README 安装和校验，请用 `git clone` 取当前分支，或等待经批准后重新打包的 Release。不要在旧 zip 内直接照做下节的 20/20 校验。
+> **已发布 zip 的内容限制（2026-11-19 实测）**：`v1.0.1-beta` 资产由提交 `d18fae6` 打包，包内 `README.md` / `CHANGELOG.md` / `SKILL.md` / `说明.md` 仍是旧口径（README 标“v1.0.0 发布候选”，安装命令写 `视频提示词Skill`；SKILL 标 `1.0.1-dev`；说明标 `v1.0.0 发布候选`；zip 内中文文件名可能显示为 `??????.md`），包内 `scripts/quality_gate.py --cases` 也是旧版：20 例中 19/20 一致，且 mismatch 返回 0。仓库当前分支已修复这些文档与门禁问题；合并后可用 `git clone` 取 main，或等待经批准后重新打包的 Release。不要在旧 zip 内直接照做下节的 20/20 校验。
 
 ---
 
@@ -127,16 +127,16 @@ video-prompt-studio/
 
 ## 校验
 
-以下命令和结果（20/20、mismatch 非零退出）针对**当前仓库分支**；已发布的 `v1.0.1-beta` zip 内是旧脚本，实测 19/20 且 mismatch 退出 0，不能用于复现本节结果。差异见上节“已发布 zip 的内容限制”。
+以下命令和结果（20/20、mismatch 非零退出）针对**当前仓库分支**；已发布的 `v1.0.1-beta` zip 内是旧脚本，实测 19/20 且 mismatch 退出 0，不能用于复现本节结果。差异见“发布包与校验和”节的“已发布 zip 的内容限制”。
 
 ```bash
 cd video-prompt-studio
 # Windows 建议加 -X utf8；脚本只用标准库
-python -X utf8 scripts/check_templates.py                 # 18 个模板 + 229 个占位符
-python -X utf8 scripts/check_package.py output.md --model seedance-2.0
-python -X utf8 scripts/selftest.py                        # 20 项回归
-python -X utf8 scripts/quality_gate.py --cases scripts/fixtures/quality_gate_cases.md  # 20/20，mismatch 非零退出
-python -X utf8 scripts/tests/test_quality_gate_exit.py    # 质量门禁退出码回归
+python3 -X utf8 scripts/check_templates.py                 # 18 个模板 + 229 个占位符
+python3 -X utf8 scripts/check_package.py output.md --model seedance-2.0
+python3 -X utf8 scripts/selftest.py                        # 20 项回归
+python3 -X utf8 scripts/quality_gate.py --cases scripts/fixtures/quality_gate_cases.md  # 20/20，mismatch 非零退出
+python3 -X utf8 scripts/tests/test_quality_gate_exit.py    # 质量门禁退出码回归
 ```
 
 示例：`check_package.py` 输出

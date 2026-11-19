@@ -131,7 +131,7 @@ video-prompt-studio/
 
 ```bash
 cd video-prompt-studio
-# Windows 建议加 -X utf8；脚本只用标准库
+# macOS/Linux 用 python3；Windows 换成 python 或 py -3（保留 -X utf8）；脚本只用标准库
 python3 -X utf8 scripts/check_templates.py                 # 18 个模板 + 229 个占位符
 python3 -X utf8 scripts/check_package.py output.md --model seedance-2.0
 python3 -X utf8 scripts/selftest.py                        # 20 项回归

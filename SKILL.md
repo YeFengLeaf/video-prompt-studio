@@ -110,18 +110,18 @@ metadata:
 2. **定节拍**：按叙事/信息节拍分段，不按"一句一镜"或"固定三镜"；时长由内容决定，**不硬凑上限**，撑不满就写短，写不下就拆条。
 3. **定镜头**：每镜一个主动作、一个主运镜、一个光源逻辑、一个可收束画面，不让镜头语言压过动作可读性。
 4. **编译方言**：按目标模型重排结构、换引用语法、把参数移到提示词外（MiniMax H3 例外）。
-5. **过检**：有 shell 时先跑 `python -X utf8 scripts/check_package.py <包.md> --model <模型>`，再按 `references/06_质量与自检.md` 人工过一遍；无 shell 时按该文件 §8 人工对账，并在自检节写明「脚本未跑」，不得谎报结果。
+5. **过检**：有 shell 时先跑 `python3 -X utf8 scripts/check_package.py <包.md> --model <模型>`，再按 `references/06_质量与自检.md` 人工过一遍；无 shell 时按该文件 §8 人工对账，并在自检节写明「脚本未跑」，不得谎报结果。
 
 ## 9. 自检与脚本
 
 ```bash
-# 以下命令在 Skill 根目录执行；Windows 建议加 -X utf8
-python -X utf8 scripts/check_package.py output.md --model seedance-2.0
-python -X utf8 scripts/check_templates.py            # 模板结构 + {{占位符}} 完整性
-python -X utf8 scripts/selftest.py                   # 样例 + 全部模板 + 新脚本回归
-python -X utf8 scripts/check_switch.py <包A.md> <包B.md>   # 切换验收：故事层逐字一致
-python -X utf8 scripts/quality_gate.py --cases scripts/fixtures/quality_gate_cases.md  # 质量门禁 20 例；mismatch 非零退出
-python -X utf8 scripts/dialect_converter.py --input neutral.txt --model kling  # 方言转换：故事核逐字保留
+# 以下命令在 Skill 根目录执行；macOS/Linux 用 python3，Windows 换成 python 或 py -3
+python3 -X utf8 scripts/check_package.py output.md --model seedance-2.0
+python3 -X utf8 scripts/check_templates.py            # 模板结构 + {{占位符}} 完整性
+python3 -X utf8 scripts/selftest.py                   # 样例 + 全部模板 + 新脚本回归
+python3 -X utf8 scripts/check_switch.py <包A.md> <包B.md>   # 切换验收：故事层逐字一致
+python3 -X utf8 scripts/quality_gate.py --cases scripts/fixtures/quality_gate_cases.md  # 质量门禁 20 例；mismatch 非零退出
+python3 -X utf8 scripts/dialect_converter.py --input neutral.txt --model kling  # 方言转换：故事核逐字保留
 ```
 
 脚本只做确定性检查（§5 第一级）；**不会**给"好/坏"打分。FAIL 必须修；WARN 要写进 §8 风险。

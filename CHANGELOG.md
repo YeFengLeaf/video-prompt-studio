@@ -12,6 +12,9 @@
 - 质量门禁：`scripts/quality_gate.py --cases` 在任一 case mismatch 时返回 exit 1；case 09 因提示词含 `8K` 触发 Q4 参数泄漏，预期由 `WARN` 更正为 `BLOCKED`；新增 `scripts/tests/test_quality_gate_exit.py`，验证全匹配 exit 0、mismatch exit 1、无 case exit 2。`selftest.py` 的质量门禁项改为要求 20/20。
 - 外部模型口径：Runway Gen-3 由 A 降为 C/未核实（官方发布页只证实 Gen-3 Alpha 与面板能力，未证实具体参数）；Sora 2 产品停用日期 2026-04-26 因系统卡返回 403 标为未复核，Videos API 2026-09-24 关闭仍按 OpenAI 模型页记为 A；Kling 4.0 复核日期更新为 2026-11-19（官方页标注 2026-11-04，数值未变）。
 - 历史文档：`docs/02`、`docs/04`、`docs/05` 增加历史状态说明，避免把 2026-10-20 的 13/13、4 样例、17/223 等旧计数当作当前状态；`docs/05` 补充 G5 按 README 未通过、G6/G7/G8/G9 仍未完成的实况。
+- 发行包边界：README、`docs/03`、`docs/05` 明确 20/20 与 mismatch 非零退出只适用于当前分支；已发布 `v1.0.1-beta` zip 内仍是旧文档与旧门禁（19/20、mismatch 退出 0），不能当作已对齐的安装/校验入口。
+- 历史口径：`docs/05` 的“当前状态”改为“当时状态（截至 2026-10-20）”；质量指标注明 20/20 是 2026-11-19 当前分支复核值。`CHANGELOG` 1.0.1-beta 条目补充说明 `docs/05` 后续已加历史注记。
+- 回归入口：`scripts/tests/test_quality_gate_exit.py` 仍需按 README / `docs/03` 手动运行，尚未接入 `selftest.py`；仓库没有 CI workflow，发布前须单独执行该测试。
 
 ## [1.0.1-beta] - 2026-10-27（预发布）
 
@@ -32,7 +35,7 @@ Batch A（P0 修复）、Batch B（入口瘦身与样例扩充）、Batch C 与�
 - 入口瘦身：`SKILL.md` 由 223 行减至 135 行（Batch A 之后）；§6 模型参数表细节只保留在 `references/03_模型适配.md`，§10 失败症状表只保留在 `references/06_质量与自检.md` §4，入口只留指针与规则；章节编号未变，交叉引用未断。
 - Kling 表述统一为实验性、未核实（后被 Batch C 更正为 Kling 4.0 A 级）：`SKILL.md` frontmatter 与 §6、`docs/05_发布计划_v1.0.md` 的发布文案；Kling 参数在样例中标 C 级「未核实」，须按平台复核。
 - 参数核验日期规则（`SKILL.md` §4 第 6 节）：核验日期填 `references/03_模型适配.md` 的核验日期，超过 30 天写「需复核」，不得当作现行事实。
-- 样例计数 4 组 → 6 组（`SKILL.md`、`README.md` 正文与 `说明.md` 的样例表；`docs/05_发布计划_v1.0.md` 仅发布文案 1 行已改，门禁表与质量指标仍为 v1.0.0 历史记录，未改）。
+- 样例计数 4 组 → 6 组（`SKILL.md`、`README.md` 正文与 `说明.md` 的样例表；`docs/05_发布计划_v1.0.md` 仅发布文案 1 行已改，门禁表与质量指标当时仍为 v1.0.0 历史记录，未改；2026-11-19 已在 Unreleased 增加历史状态说明与当前复核口径）。
 
 ### Batch C（复核后修复，2026-10-27；两模型复核均报 P0，已逐项修）
 
